@@ -22,7 +22,7 @@ class SnackbarService {
     Get.snackbar(
       title,
       message,
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
       backgroundColor: Get.isDarkMode ? Colors.grey[800] : Colors.white,
       colorText: Get.isDarkMode ? Colors.white : Colors.black,
       borderRadius: 8,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pokemongo/profile/profile_screen.dart';
 
 class HomeAppBar extends StatelessWidget {
   const HomeAppBar({super.key});
@@ -19,19 +21,12 @@ class HomeAppBar extends StatelessWidget {
             ),
           ),
           Spacer(),
-          Row(
-            children: [
-              Icon(
-                Icons.notifications,
-                color: Colors.grey,
-              ),
-              SizedBox(width: 20),
-              Icon(
-                Icons.chat_bubble_outlined,
-                color: Colors.grey,
-              ),
-            ],
-          )
+          GestureDetector(
+            onTap: () => Get.to(() => ProfileScreen(), transition: Transition.rightToLeft),
+            child: CircleAvatar(
+              backgroundImage: AssetImage("assets/images/profile.png"),
+            ),
+          ),
         ],
       ),
     );

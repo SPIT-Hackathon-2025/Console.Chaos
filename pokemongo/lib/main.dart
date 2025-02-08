@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pokemongo/login_signup/login.dart';
+import 'package:pokemongo/login_signup/signup.dart';
 import 'package:pokemongo/pages/nav.dart';
+import 'package:pokemongo/service/shared_preferences_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure bindings are initialized first
+  await SharedPreferencesService.init(); // Now initialize SharedPreferences
   runApp(const MyApp());
 }
 
@@ -13,12 +20,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'PokemonGo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: NavigationTabs(),
+      home: LoginPage(),
     );
   }
 }

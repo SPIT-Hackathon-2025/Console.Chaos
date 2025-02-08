@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pokemongo/controller/problem_post_controller.dart';
 import 'package:pokemongo/pages/problems/appbar.dart';
-import 'package:pokemongo/themes.dart';
+import 'package:pokemongo/constants.dart';
 import 'package:pokemongo/widgets/problem_post.dart';
 
 class ProblemsPostsPage extends StatelessWidget {
@@ -8,34 +10,30 @@ class ProblemsPostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ProblemPostController controller = Get.put(ProblemPostController());
+    
     return Scaffold(
       backgroundColor: bgcolor,
       body: Container(
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         child: Column(
           children: [
-            HomeAppBar(),
-            SizedBox(height: 20),
+            const HomeAppBar(),
+            const SizedBox(height: 20),
             Expanded(
-                child: ListView.builder(
-                    itemCount: 2,
-                    itemBuilder: (context, index) {
-                      return ProblemPostComponent(
-                          
-                          tags: [
-                            "#LostPokemon",
-                            "#Charizard"
-                          ],
-                          views: "10k",
-                          imageUrl: "assets/problems/problem1.jpeg",
-                          username: 'Ash Ketchum',
-                          timeAgo: '2 hours ago',
-                          location: "Mumbai, Maharashtra, India",
-                          content: 'I lost my Charizard',
-                          likes: 10,
-                          dislikes: 2,
-                          comments: 5);
-                    }))
+              child: Obx(
+                () => ListView.builder(
+                  itemCount: controller.posts.length,
+                  itemBuilder: (context, index) {
+                    return ProblemPostComponent(
+                      post: controller.posts[index],
+                      index: index,
+                      controller: controller,
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pokemongo/themes.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:pokemongo/constants.dart';
 
 class NormalPosts extends StatelessWidget {
   const NormalPosts({super.key});
@@ -8,7 +9,6 @@ class NormalPosts extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
-      body: Container(),
-    );
+      );
   }
 }

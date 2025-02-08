@@ -5,7 +5,7 @@ import 'package:pokemongo/pages/lost_and_found/lost_and_found.dart';
 import 'package:pokemongo/pages/posts/normal_posts.dart';
 import 'package:pokemongo/pages/problems/problems.dart';
 import 'package:pokemongo/pages/upload_post/upload_post.dart';
-import 'package:pokemongo/themes.dart';
+import 'package:pokemongo/constants.dart';
 
 class NavigationTabs extends StatefulWidget {
   const NavigationTabs({super.key});
