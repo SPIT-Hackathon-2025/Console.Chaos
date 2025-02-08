@@ -5,6 +5,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  username: {
+    type: String,
+    unique: true, // Ensure usernames are unique
+    required: true, // Make username required
+    trim: true,
+  },
   email: {
     type: String,
     unique: true,
@@ -15,6 +21,11 @@ const UserSchema = new mongoose.Schema({
   // storing password hash is recommended
   password: {
     type: String,
+  },
+  // Profile image URL
+  imgUrl: {
+    type: String,
+    trim: true,
   },
   // Optional type field, e.g., "regular", "admin"
   userType: {

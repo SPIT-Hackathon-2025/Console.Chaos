@@ -7,9 +7,9 @@ const uri = "mongodb+srv://rorifim199:vpJzSwKhWjECoho9@spithack1.ul5ys.mongodb.n
 
 const PORT = 3000; // Define the port
 
-const userRoutes = require('./routes/userRoutes');
-const postRoutes = require('./routes/postRoutes');
-const commentRoutes = require('./routes/commentRoutes');
+const userRoutes = require('./Routes/user_Routes');
+const postRoutes = require('./Routes/postRoute');
+const commentRoutes = require('./Routes/commentRoute');
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(uri)

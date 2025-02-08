@@ -23,6 +23,10 @@ const PostSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+
+  views:{
+    type:Number
+  },
   // Detailed description of the issue
   description: {
     type: String,
