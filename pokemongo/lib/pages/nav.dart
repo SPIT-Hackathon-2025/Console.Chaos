@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pokemongo/pages/drives/open_drives.dart';
 import 'package:pokemongo/pages/lost_and_found/lost_and_found.dart';
-import 'package:pokemongo/pages/posts/normal_posts.dart';
+import 'package:pokemongo/pages/posts/map.dart';
 import 'package:pokemongo/pages/problems/problems.dart';
 import 'package:pokemongo/pages/upload_post/upload_post.dart';
 import 'package:pokemongo/constants.dart';

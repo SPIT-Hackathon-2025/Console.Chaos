@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pokemongo/chatbot/chatbot.dart';
 import 'package:pokemongo/profile/profile_screen.dart';
 
 class HomeAppBar extends StatelessWidget {
@@ -21,11 +22,21 @@ class HomeAppBar extends StatelessWidget {
             ),
           ),
           Spacer(),
-          GestureDetector(
-            onTap: () => Get.to(() => ProfileScreen(), transition: Transition.rightToLeft),
-            child: CircleAvatar(
-              backgroundImage: AssetImage("assets/images/profile.png"),
-            ),
+          Row(
+            children: [
+              GestureDetector(
+                  onTap: () => Get.to(() => ChatBotPage()),
+                  child: Icon(Icons.catching_pokemon_rounded,
+                      color: Colors.redAccent, size: 30)),
+              SizedBox(width: 10),
+              GestureDetector(
+                onTap: () => Get.to(() => ProfileScreen(),
+                    transition: Transition.rightToLeft),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage("assets/images/profile.png"),
+                ),
+              ),
+            ],
           ),
         ],
       ),
