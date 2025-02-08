@@ -42,16 +42,13 @@ const PostSchema = new mongoose.Schema({
     default: () => Date.now(),
   },
   // Location stored as GeoJSON for spatial queries
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point'
-    },
-    coordinates: {
-      type: [Number], // [longitude, latitude]
-      index: '2dsphere',
-    }
+  latitude: {
+    type: Number,
+    required: true, // Optional: make it required if necessary
+  },
+  longitude: {
+    type: Number,
+    required: true, // Optional: make it required if necessary
   },
   // Array of tags for categorization
   tags: [{
