@@ -1,45 +1,59 @@
 import 'package:get/get.dart';
-import 'package:pokemongo/models/problems_post_model.dart';
-import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/problems_post_model.dart';
 
 class ProblemPostController extends GetxController {
   var posts = <ProblemPost>[].obs;
-  var likedPosts = <int>{}.obs; // Track liked posts
-  var dislikedPosts = <int>{}.obs; // Track disliked posts
+  var likedPosts = <int>{}.obs;
+  var dislikedPosts = <int>{}.obs;
+
+  final Dio _dio = Dio(BaseOptions(baseUrl: "https://rapid-raptor-slightly.ngrok-free.app/api")); // Change based on your backend
 
   @override
   void onInit() {
     super.onInit();
-    loadPosts();
+    fetchPosts(); // Fetch posts when the controller is initialized
   }
 
-  void loadPosts() {
-    posts.value = [
-      ProblemPost(
-        username: "John Doe",
-        timeAgo: "2h ago",
-        location: "New York, USA",
-        content: "This is a sample problem description.",
-        imageUrl: "assets/problems/problem1.jpeg",
-        likes: 10,
-        dislikes: 2,
-        comments: 5,
-        views: "1.2k",
-        tags: ["Environment", "Community"],
-      ),
-      ProblemPost(
-        username: "Jane Smith",
-        timeAgo: "5h ago",
-        location: "London, UK",
-        content: "Another sample problem that needs attention.",
-        imageUrl: "assets/problems/problem1.jpeg",
-        likes: 25,
-        dislikes: 1,
-        comments: 8,
-        views: "2.3k",
-        tags: ["Health", "Safety"],
-      ),
-    ];
+  /// Fetch posts from the API
+  Future<void> fetchPosts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    print(token);
+    try {
+      print(1);
+      final response = await _dio.get("/post", data: {
+        "token": token,
+      }); // Adjust endpoint accordingly
+      print(2);
+      print(response);
+      if (response.statusCode == 200) {
+      print(3);
+
+        var fetchedData = response.data as List;
+      print(4);
+
+        var postList = fetchedData.map((post) => ProblemPost(
+          postId: post['_id'].hashCode, // Using hashCode as a unique identifier
+          username: post["user"]['username'] ?? 'Unknown',
+          timeAgo: _formatTimeAgo(post['createdAt']),
+          location: "${post['latitude']}, ${post['longitude']}",
+          content: post['description'] ?? '',
+          imageUrl: post['imgUrl'],
+          likes: post['upvotes'] ?? 0,
+          dislikes: post['downvotes'] ?? 0,
+          comments: 0, // Assuming no comments field, you can update this later
+          views: "0", // Placeholder, update as needed
+          tags: List<String>.from(post['tags'] ?? []),
+        )).toList();
+      print(5);
+
+        posts.assignAll(postList); // Update observable list
+      }
+    } catch (e) {
+      print("Error fetching posts: $e");
+    }
   }
 
   void likePost(int index) {
@@ -71,5 +85,17 @@ class ProblemPostController extends GetxController {
     }
     update();
   }
-  
+
+  String _formatTimeAgo(String dateTimeString) {
+    DateTime postTime = DateTime.parse(dateTimeString);
+    Duration difference = DateTime.now().difference(postTime);
+
+    if (difference.inMinutes < 60) {
+      return "${difference.inMinutes}m ago";
+    } else if (difference.inHours < 24) {
+      return "${difference.inHours}h ago";
+    } else {
+      return "${difference.inDays}d ago";
+    }
+  }
 }

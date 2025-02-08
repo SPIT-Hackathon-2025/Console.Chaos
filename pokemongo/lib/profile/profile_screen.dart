@@ -89,6 +89,7 @@ class LostAndFoundTab extends StatelessWidget {
       itemCount: 10, // Replace with the actual number of items
       itemBuilder: (context, index) {
         return LostFoundItem(
+          username: "Jainam Barbhaya",
           isOwner: true,
           imageUrl: "assets/problems/problem1.jpeg",
           description: 'found a Charizard at the park',

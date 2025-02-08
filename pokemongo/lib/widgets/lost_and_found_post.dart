@@ -3,6 +3,7 @@ import 'package:pokemongo/constants.dart';
 
 class LostFoundItem extends StatelessWidget {
   final String imageUrl;
+  final String username;
   final String location;
   final String timeFound;
   final String description;
@@ -14,6 +15,7 @@ class LostFoundItem extends StatelessWidget {
   const LostFoundItem({
     super.key,
     required this.imageUrl,
+    required this.username,
     required this.location,
     required this.timeFound,
     required this.description,
@@ -43,9 +45,15 @@ class LostFoundItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(username.toUpperCase(),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
+              child: Image.network(
                 imageUrl,
                 height: 150,
                 width: double.infinity,

@@ -51,7 +51,7 @@ class CommunityDriveCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(1)),
                   image: DecorationImage(
-                    image: AssetImage(imageUrl),
+                    image: NetworkImage(imageUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -72,7 +72,7 @@ class CommunityDriveCard extends StatelessWidget {
                   const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
                   const SizedBox(width: 4),
                   Text(
-                    location,
+                    "Location: $location",
                     style: TextStyle(fontSize: 14, color: Colors.grey[700], fontWeight: FontWeight.bold),
                   ),
                 ],

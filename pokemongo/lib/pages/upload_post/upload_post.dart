@@ -65,54 +65,97 @@ class UploadPost extends StatelessWidget {
                         ),
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
-                    ],
-                  );
-                } else if (controller.selectedCategory.value ==
-                    'Community Service Post') {
-                  return Column(
-                    children: [
+                      const SizedBox(height: 20),
                       TextField(
-                        controller: controller.titleController,
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                        controller: controller.tagsController,
                         decoration: InputDecoration(
-                          labelText: 'Click here to add a title',
+                          labelText: 'Click here to add a tags',
                           labelStyle: TextStyle(
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          TimeOfDay? pickedTime = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                          if (pickedTime != null) {
-                            controller.timeController.text =
-                                pickedTime.format(context);
-                          }
-                        },
-                        child: AbsorbPointer(
-                          child: TextField(
-                            controller: controller.timeController,
-                            decoration: InputDecoration(
-                              labelText: 'Click here to add a time',
-                              labelStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                            ),
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ],
                   );
+                } else if (controller.selectedCategory.value ==
+                    'Community Service Post') {
+                    return Column(
+                    children: [
+                      TextField(
+                      controller: controller.titleController,
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                      decoration: InputDecoration(
+                        labelText: 'Click here to add a title',
+                        labelStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                      ),
+                      ),
+                      GestureDetector(
+                      onTap: () async {
+                        TimeOfDay? pickedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                        );
+                        if (pickedTime != null) {
+                        controller.timeController.text =
+                          pickedTime.format(context);
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextField(
+                        controller: controller.timeController,
+                        decoration: InputDecoration(
+                          labelText: 'Click here to add a time',
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                      ),
+                      GestureDetector(
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null) {
+                        controller.dateController.text =
+                          "${pickedDate.toLocal()}".split(' ')[0];
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextField(
+                        controller: controller.dateController,
+                        decoration: InputDecoration(
+                          labelText: 'Click here to add a date',
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                      ),
+                    ],
+                    );
                 } else if (controller.selectedCategory.value ==
                     'Lost & Found Post') {
                   return Column(
@@ -129,6 +172,20 @@ class UploadPost extends StatelessWidget {
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                         ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: controller.tagsController,
+                        decoration: InputDecoration(
+                          labelText: 'Click here to add a tags',
+                          labelStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ],
                   );
@@ -190,7 +247,7 @@ class UploadPost extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Upload logic
+                    controller.uploadPost();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,

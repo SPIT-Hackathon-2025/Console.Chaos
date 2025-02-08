@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pokemongo/constants.dart';
 import 'package:pokemongo/controller/problem_post_controller.dart';
 import 'package:pokemongo/models/problems_post_model.dart';
+import 'package:pokemongo/widgets/comments_tree.dart';
 
 class ProblemPostComponent extends StatelessWidget {
   final ProblemPost post;
@@ -13,6 +15,7 @@ class ProblemPostComponent extends StatelessWidget {
     required this.post,
     required this.index,
     required this.controller,
+    
   });
 
   @override
@@ -75,7 +78,11 @@ class ProblemPostComponent extends StatelessWidget {
           if (post.imageUrl != null)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Image.asset(post.imageUrl!, width: double.infinity, fit: BoxFit.cover,),
+              child: Image.network(
+                post.imageUrl!,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
           Wrap(
             spacing: 8.0,
@@ -88,32 +95,53 @@ class ProblemPostComponent extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Obx(() => Row(
-          children: [
-            IconButton(
-              icon: Icon(
-                Icons.thumb_up,
-                color: controller.likedPosts.contains(index) ? Colors.blue : Colors.grey,
-              ),
-              onPressed: () => controller.likePost(index),
-            ),
-            Text('${post.likes.value}', style: const TextStyle(color: Colors.grey)),
-            IconButton(
-              icon: Icon(
-                Icons.thumb_down,
-                color: controller.dislikedPosts.contains(index) ? Colors.red : Colors.grey,
-              ),
-              onPressed: () => controller.dislikePost(index),
-            ),
-            Text('${post.dislikes.value}', style: const TextStyle(color: Colors.grey)),
-            const Spacer(),
-            Text('${post.views} views', style: const TextStyle(color: Colors.grey)),
-            const Icon(Icons.show_chart_sharp, color: Colors.green, size: 18),
-            const Spacer(),
-            const Icon(Icons.chat_bubble_outline, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text('${post.comments}', style: const TextStyle(color: Colors.grey)),
-          ],
-        ))
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.thumb_up,
+                      color: controller.likedPosts.contains(index)
+                          ? Colors.blue
+                          : Colors.grey,
+                    ),
+                    onPressed: () => controller.likePost(index),
+                  ),
+                  Text('${post.likes.value}',
+                      style: const TextStyle(color: Colors.grey)),
+                  IconButton(
+                    icon: Icon(
+                      Icons.thumb_down,
+                      color: controller.dislikedPosts.contains(index)
+                          ? Colors.red
+                          : Colors.grey,
+                    ),
+                    onPressed: () => controller.dislikePost(index),
+                  ),
+                  Text('${post.dislikes.value}',
+                      style: const TextStyle(color: Colors.grey)),
+                  const Spacer(),
+                  Text('${post.views} views',
+                      style: const TextStyle(color: Colors.grey)),
+                  const Icon(Icons.show_chart_sharp,
+                      color: Colors.green, size: 18),
+                  const Spacer(),
+                  GestureDetector(
+                      onTap: () => {
+                            showBottomSheet(
+                              backgroundColor: bgcolor,
+                              showDragHandle: true,
+                              context: context,
+                              builder: (context) {
+                                return SingleChildScrollView(child: CommentTreeComponent(postId: post.postId,));
+                              },
+                            )
+                          },
+                      child: const Icon(Icons.chat_bubble_outline,
+                          color: Colors.grey)),
+                  const SizedBox(width: 4),
+                  Text('${post.comments}',
+                      style: const TextStyle(color: Colors.grey)),
+                ],
+              ))
         ],
       ),
     );

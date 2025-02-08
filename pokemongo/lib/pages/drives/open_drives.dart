@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pokemongo/controller/community_service_controller.dart';
 import 'package:pokemongo/pages/drives/open_drives_appbar.dart';
 import 'package:pokemongo/constants.dart';
 import 'package:pokemongo/widgets/open_drives_post.dart';
 
 class OpenDrives extends StatelessWidget {
-  const OpenDrives({super.key});
+  final CommunityServiceController controller =
+      Get.put(CommunityServiceController());
 
   @override
   Widget build(BuildContext context) {
@@ -17,21 +20,30 @@ class OpenDrives extends StatelessWidget {
             OpenDriveAppBar(),
             SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10, // Replace with the actual number of items
-                itemBuilder: (context, index) {
-                  return CommunityDriveCard(
-                    isOrganizer: false,
-                    imageUrl: 'assets/problems/problem1.jpeg',
-                    location: 'Location $index',
-                    title: 'Community Drive $index',
-                    time: 'Time $index',
-                    onRsvp: () {
-                      print('RSVP clicked for drive $index!');
-                    },
-                  );
-                },
-              ),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (controller.events.isEmpty) {
+                  return Center(child: Text("No drives available"));
+                }
+                return ListView.builder(
+                  itemCount: controller.events.length,
+                  itemBuilder: (context, index) {
+                    var event = controller.events[index];
+                    return CommunityDriveCard(
+                      isOrganizer: false,
+                      imageUrl: event.imageUrl,
+                      location: "spit",
+                      title: event.eventDetails,
+                      time: event.eventDate,
+                      onRsvp: () {
+                        print('RSVP clicked for drive ${event.id}');
+                      },
+                    );
+                  },
+                );
+              }),
             )
           ],
         ),

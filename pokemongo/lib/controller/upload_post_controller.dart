@@ -1,16 +1,31 @@
 import 'dart:typed_data';
+import 'package:dio/dio.dart' as dio;
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pokemongo/constants.dart';
+import 'package:pokemongo/controller/lost_and_found_controller.dart';
+import 'package:pokemongo/controller/map_controller.dart';
+import 'package:pokemongo/controller/problem_post_controller.dart';
+import 'package:pokemongo/models/lost_and_found_model.dart';
 import 'dart:io';
+
+import 'package:pokemongo/models/problems_post_model.dart';
+import 'package:pokemongo/service/api_service.dart';
+import 'package:pokemongo/service/shared_preferences_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadPostController extends GetxController {
   Rx<File?> image = Rx<File?>(null);
   Rx<Position?> position = Rx<Position?>(null);
   RxString address = ''.obs;
   Rx<Uint8List?> watermarkedImgBytes = Rx<Uint8List?>(null);
+  RxDouble latitude = 0.0.obs;
+  RxDouble longitude = 0.0.obs;
 
   // Text Editing Controllers
   TextEditingController titleController = TextEditingController();
@@ -18,6 +33,10 @@ class UploadPostController extends GetxController {
   TextEditingController timeController = TextEditingController();
   TextEditingController tagsController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+
+  MapController mapController = Get.put(MapController());
+  MumbaiMapController mumbaiMapController = Get.put(MumbaiMapController());
 
   // Dropdown categories
   RxString selectedCategory = 'Regular Post'.obs;
@@ -26,6 +45,8 @@ class UploadPostController extends GetxController {
     'Community Service Post',
     'Lost & Found Post'
   ];
+
+  final String profilePic = 'assets/images/profile.png';
 
   Future<void> captureImage() async {
     final picker = ImagePicker();
@@ -63,12 +84,16 @@ class UploadPostController extends GetxController {
       locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
     );
     position.value = pos;
+    latitude.value = pos.latitude;
+    longitude.value = pos.longitude;
     getAddressFromCoordinates(pos.latitude, pos.longitude);
   }
 
-  Future<void> getAddressFromCoordinates(double latitude, double longitude) async {
+  Future<void> getAddressFromCoordinates(
+      double latitude, double longitude) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks.first;
         address.value = "${place.street}, ${place.locality}, ${place.country}";
@@ -76,6 +101,123 @@ class UploadPostController extends GetxController {
       }
     } catch (e) {
       print("Error retrieving address: $e");
+    }
+  }
+
+  Future<String> uploadImage(File file) async {
+    String fileName = file.path.split('/').last;
+    dio.FormData formData = dio.FormData.fromMap({
+      "image": await dio.MultipartFile.fromFile(file.path, filename: fileName),
+    });
+
+    final response = await Dio().post(
+        "https://pleasant-nearby-hermit.ngrok-free.app/pokemon_images/upload.php",
+        data: formData);
+    String url = response.data['imageUrl'].toString().replaceAll(
+        "http://localhost", "https://pleasant-nearby-hermit.ngrok-free.app");
+    return url;
+  }
+
+  void uploadPost() async {
+    if (selectedCategory.value == 'Regular Post') {
+      if (descriptionController.text.isEmpty || image.value == null) {
+        Get.snackbar("Error", "Description and image are required!",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        return;
+      }
+
+      // Generate a unique post I
+
+      String imageUrl = await uploadImage(image.value!);
+      print(imageUrl);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token')!;
+      print(token);
+
+      final response = await apiService.post("/post", body: {
+        "imgUrl": imageUrl.toString(),
+        "description": descriptionController.text,
+        "latitude": latitude.value,
+        "longitude": longitude.value,
+        "token": SharedPreferencesService.getString('token'),
+        "tags": tagsController.text.split(","),
+      });
+      print(response);
+      // Add marker to the map
+      if (latitude.value != 0.0 && longitude.value != 0.0) {
+        mumbaiMapController.addMarker(latitude.value, longitude.value);
+      }
+
+      Get.snackbar("Success", "Post uploaded successfully!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white);
+
+      // Clear the form after successful upload
+      descriptionController.clear();
+      image.value = null;
+      position.value = null;
+      address.value = "";
+      latitude.value = 0;
+      longitude.value = 0;
+
+      Get.back();
+      ProblemPostController problemPostController =
+          Get.find<ProblemPostController>();
+      problemPostController.fetchPosts();
+    } else if (selectedCategory.value == 'Community Service Post') {
+      String imageUrl = await uploadImage(image.value!);
+      print(imageUrl);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token')!;
+      print(descriptionController.text);
+      final response = await apiService.post("/event", body: {
+        "imgUrl": imageUrl,
+        "description": titleController.text,
+        "token": token,
+        "tags": tagsController.text.split(","),
+        "eventDate": dateController.text,
+      });
+      print(response);
+      Get.snackbar("Success", "Event Created Succesfully!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white);
+
+      // Clear form
+      descriptionController.clear();
+      image.value = null;
+      address.value = "";
+
+      // Handle Community Service Post
+    } else if (selectedCategory.value == 'Lost & Found Post') {
+      String imageUrl = await uploadImage(image.value!);
+      print(imageUrl);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token')!;
+
+      final response = await apiService.post("/lostandfound/createPost", body: {
+        "imgUrl": imageUrl,
+        "description": descriptionController.text,
+        "token": token,
+        "tags": tagsController.text.split(","),
+      });
+      print(response);
+      Get.snackbar("Success", "Lost & Found post uploaded!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white);
+      LostAndFoundController problemPostController =
+          Get.find<LostAndFoundController>();
+      problemPostController.fetchAllLostAndFound();
+      Get.back();
+    } else {
+      return;
     }
   }
 }

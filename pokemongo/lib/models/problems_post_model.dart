@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 class ProblemPost {
+  int postId;
   String username;
   String timeAgo;
   String location;
@@ -13,6 +14,7 @@ class ProblemPost {
   List<String> tags;
 
   ProblemPost({
+    required this.postId,
     required this.username,
     required this.timeAgo,
     required this.location,
