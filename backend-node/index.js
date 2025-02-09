@@ -13,6 +13,7 @@ const postRoutes = require('./Routes/postRoute');
 const commentRoutes = require('./Routes/commentRoute');
 const authRoute = require('./Routes/authRoute');
 const LFRoutes = require('./Routes/Lost&FoundRoute');
+const eventRoutes = require('./Routes/enevtRoutes');
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(uri)
@@ -32,4 +33,5 @@ app.use('/api/user', userRoutes)
 app.use('/api/post', postRoutes)
 app.use('/api/comments', commentRoutes)
 app.use('/api/lostandfound', LFRoutes)
+app.use('/api/event', eventRoutes)
 

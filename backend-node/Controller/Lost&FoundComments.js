@@ -36,13 +36,13 @@ const genralComment = async (req, res) => {
     await newComment.save();
 
     // Respond with a success message and the saved comment data
-    return res.status(201).json({
+    return res.status(201).send({
       message: 'Comment added successfully',
       comment: newComment
     });
   } catch (error) {
     console.error('Error adding comment:', error.message);
-    return res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).send({ message: 'Server error', error: error.message });
   }
 };
 
@@ -53,14 +53,14 @@ const claimComment = async (req, res) => {
     // Get JWT secret from environment variables
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      return res.status(500).json({ message: 'Server configuration error: JWT secret is not defined' });
+      return res.status(500).send({ message: 'Server configuration error: JWT secret is not defined' });
     }
 
     // Extract required data from the request body
     const { text, token, postId } = req.body;
 
     if (!text || !token || !postId) {
-      return res.status(400).json({ message: 'Missing required fields: text, token, or postId' });
+      return res.status(400).send({ message: 'Missing required fields: text, token, or postId' });
     }
 
     // Verify the token and extract the payload
@@ -76,7 +76,7 @@ const claimComment = async (req, res) => {
       },
       required: ["fund_age_yr", "risk_level", "returns_1yr"],
     };
-    const userQuery=`Extract a keyword or phrase that best describes the main topic of this comment: ${text}`
+    const userQuery = `Extract a keyword or phrase that best describes the main topic of this comment: ${text}`
     const data = [
       {
         role: "system",
@@ -92,34 +92,77 @@ const claimComment = async (req, res) => {
     const response = await ollama.chat({
       model: "llama3.2",
       messages: data,
-      format:format_1
-        });
-    const tag=JSON.parse(response.message.content).keyword
-    
+      format: format_1
+    });
+    const tag = JSON.parse(response.message.content).keyword
+
 
     // Create a new comment using the Comment model
     const newComment = new Comment({
       comment: text,
       user: userId,
       post: postId,
-      tag:tag
+      tags: tag
       // Optionally, if you want to add tags you can include them here, e.g.,
       // tags: req.body.tags
     });
 
     // Save the comment to the database
     await newComment.save();
-
+    
     // Respond with a success message and the saved comment data
-    return res.status(201).json({
+    return res.status(201).send({
       message: 'Comment added successfully',
       comment: newComment,
-      tag:tag
-      
+      tags: tag
+
     });
   } catch (error) {
     console.error('Error adding comment:', error.message);
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 }
-module.exports = { genralComment, claimComment };
+const getGeneralComments = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const comments = await Comment.find({
+      post: postId,
+      tags: { $exists: false }, // Exclude comments with a "tag" field
+    }).populate("user", "username email imgUrl phoneNumber userType"); // Merge user details
+
+    res.status(200).send(comments);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const getAllComments = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const comments = await Comment.find({ post: postId })
+      .populate("user", "username email imgUrl phoneNumber userType"); // Merge user details
+
+    res.status(200).send(comments);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const getClaimComments = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const comments = await Comment.find({
+      post: postId,
+      tags: { $exists: true }, // Include only comments with a "tag" field
+    }).populate("user", "username email imgUrl phoneNumber userType"); // Merge user details
+
+    res.status(200).send(comments);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+module.exports = { genralComment, claimComment, getAllComments,getGeneralComments,getClaimComments };

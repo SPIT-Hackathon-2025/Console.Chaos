@@ -1,41 +1,24 @@
 const mongoose = require('mongoose');
 
-const LostFoundCommentSchema = new mongoose.Schema({
-  // The text content of the comment
-  comment: {
+const LostFoundPostSchema = new mongoose.Schema({
+  imgUrl: {
     type: String,
-    required: true,
-    trim: true,
+    required: false, // Optional image URL
   },
-  // Voting fields
-  upvotes: {
-    type: Number,
-    default: 0,
-  },
-  downvotes: {
-    type: Number,
-    default: 0,
-  },
-  // Reference to the user who posted this comment
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
-  // Reference to the LostFound item this comment is associated with
-  lostFound: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'LostFound',
+  description: {
+    type: String,
     required: true,
+    trim: true,
   },
-  // Tags for the comment; defaults to ["normal"] unless the user explicitly tags it (e.g., "ClaimingThis")
-  tags: {
-    type: [String],
-    default: ['normal']
-  }
-}, {
-  // Custom timestamps: 'posted' for creation time and 'updated' for last update
-  timestamps: { createdAt: 'posted', updatedAt: 'updated' }
-});
+  tags: [{
+    type: String,
+    trim: true,
+  }],
+}, { timestamps: true });
 
-module.exports = mongoose.model('LostFoundComment', LostFoundCommentSchema);
+module.exports = mongoose.model('LostFoundPost', LostFoundPostSchema);

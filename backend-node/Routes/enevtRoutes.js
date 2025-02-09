@@ -1,11 +1,11 @@
 const express = require('express'); // Import express
 const router = express.Router(); // Create a router
-const commentController = require('../Controller/commentController'); // Import comment controller
+const eventController = require('../Controller/eventController '); // Import comment controller
 
 // POST route to create a new comment
-router.post('/', commentController.createComment);
+router.post('/', eventController.createEvent);
 
 // GET route to retrieve all comments
-router.get('/:postId', commentController.getAllComments);
+router.get('/', eventController.getAllEvents);
 
 module.exports = router; // Export the router

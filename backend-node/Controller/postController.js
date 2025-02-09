@@ -1,24 +1,51 @@
 const Post = require('../Models/PostModel'); // Import Post model
+const jwt=require('jsonwebtoken')
 
 // Function to create a new post
 const createPost = async (req, res) => {
     try {
-        const post = new Post(req.body); // Create a new post instance with request body
-        await post.save(); // Save the post to the database
-        res.status(201).send(post); // Respond with the created post
+        const jwtSecret=process.env.JWT_SECRET
+      const { description, token, latitude, longitude, tags,imgUrl } = req.body;
+  
+      const decoded = jwt.verify(token, jwtSecret);
+      // Assuming your token payload was signed with an "id" property:
+      const user = decoded.id;
+  
+      // Handling image URL if an image is uploaded
+  
+      // Create post
+      const newPost = new Post({
+        imgUrl,
+        description,
+        user,
+        latitude,
+        longitude,
+        tags,
+      });
+  
+      await newPost.save();
+      res.status(201).json({ message: "Post created successfully", post: newPost });
+  
     } catch (error) {
-        res.status(400).send(error); // Respond with an error if something goes wrong
+        console.log(error);
+        
+      res.status(500).json({ error: error.message });
     }
-};
+  };
 
 // Function to get all posts
 const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find(); // Retrieve all posts from the database
-        res.status(200).send(posts); // Respond with the list of posts
+        const posts = await Post.find()
+            .populate('user', 'name username email'); // Populate user details
+
+        res.status(200).send(posts);
     } catch (error) {
-        res.status(500).send(error); // Respond with an error if something goes wrong
+        console.log(error);
+        
+        res.sendStatus(500);
     }
 };
+
 
 module.exports = { createPost, getAllPosts }; // Export the functions
