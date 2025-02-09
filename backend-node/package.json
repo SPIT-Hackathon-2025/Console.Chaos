@@ -19,6 +19,7 @@
     "mongoose": "^8.10.0",
     "mongose": "^0.0.2-security",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.0",
     "ollama": "^0.5.12",
     "path": "^0.12.7"
   },
