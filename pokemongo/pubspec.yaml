@@ -47,6 +47,7 @@ dependencies:
   comment_tree: ^0.3.0
   intl: ^0.20.2
   font_awesome_flutter: ^10.8.0
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:

@@ -38,7 +38,9 @@ class OpenDrives extends StatelessWidget {
                       title: event.eventDetails,
                       time: event.eventDate,
                       onRsvp: () {
-                        print('RSVP clicked for drive ${event.id}');
+                        CommunityServiceController rsvpController =
+                            Get.put(CommunityServiceController());
+                            rsvpController.joinEvent(event.id);
                       },
                     );
                   },

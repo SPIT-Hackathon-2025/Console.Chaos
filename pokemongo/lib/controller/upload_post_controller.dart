@@ -31,6 +31,8 @@ class UploadPostController extends GetxController {
 
   RxInt coins = 0.obs;
 
+  RxBool isLoading = false.obs;
+
   // Text Editing Controllers
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -122,6 +124,7 @@ class UploadPostController extends GetxController {
   }
 
   void uploadPost() async {
+    isLoading.value = true;
     if (selectedCategory.value == 'Regular Post') {
       if (descriptionController.text.isEmpty || image.value == null) {
         Get.snackbar("Error", "Description and image are required!",
@@ -169,10 +172,13 @@ class UploadPostController extends GetxController {
       longitude.value = 0;
 
       Get.back();
+      Get.back();
+      SnackbarService.showSuccess("Post Created Successfully!");
       ProblemPostController problemPostController =
           Get.find<ProblemPostController>();
       problemPostController.fetchPosts();
     } else if (selectedCategory.value == 'Community Service Post') {
+      isLoading.value = true;
       String imageUrl = await uploadImage(image.value!);
       print(imageUrl);
 
@@ -204,9 +210,10 @@ class UploadPostController extends GetxController {
       Get.back();
       SnackbarService.showSuccess("Social Event Created Successfully!");
       coins.value += 10;
-
+      isLoading.value = false;
       // Handle Community Service Post
     } else if (selectedCategory.value == 'Lost & Found Post') {
+      isLoading.value = true;
       String imageUrl = await uploadImage(image.value!);
       print(imageUrl);
 
@@ -231,7 +238,10 @@ class UploadPostController extends GetxController {
       LostAndFoundController problemPostController =
           Get.find<LostAndFoundController>();
       problemPostController.fetchAllLostAndFound();
+      isLoading.value = false;
     } else {
+      isLoading.value = false;
+
       return;
     }
   }

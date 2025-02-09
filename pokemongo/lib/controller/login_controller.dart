@@ -19,7 +19,10 @@ class LoginController extends GetxController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('token', response['token']);
 
+      
+
       String? token = prefs.getString('token');
+
       print(token);
       SnackbarService.showSuccess(response['message']);
       Get.to(() => NavigationTabs(), transition: Transition.rightToLeft);

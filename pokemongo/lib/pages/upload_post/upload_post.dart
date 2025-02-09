@@ -83,79 +83,79 @@ class UploadPost extends StatelessWidget {
                   );
                 } else if (controller.selectedCategory.value ==
                     'Community Service Post') {
-                    return Column(
+                  return Column(
                     children: [
                       TextField(
-                      controller: controller.titleController,
-                      style: TextStyle(color: Colors.white, fontSize: 15),
-                      decoration: InputDecoration(
-                        labelText: 'Click here to add a title',
-                        labelStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                      ),
-                      GestureDetector(
-                      onTap: () async {
-                        TimeOfDay? pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        );
-                        if (pickedTime != null) {
-                        controller.timeController.text =
-                          pickedTime.format(context);
-                        }
-                      },
-                      child: AbsorbPointer(
-                        child: TextField(
-                        controller: controller.timeController,
+                        controller: controller.titleController,
+                        style: TextStyle(color: Colors.white, fontSize: 15),
                         decoration: InputDecoration(
-                          labelText: 'Click here to add a time',
+                          labelText: 'Click here to add a title',
                           labelStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                         ),
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
                       ),
                       GestureDetector(
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null) {
-                        controller.dateController.text =
-                          "${pickedDate.toLocal()}".split(' ')[0];
-                        }
-                      },
-                      child: AbsorbPointer(
-                        child: TextField(
-                        controller: controller.dateController,
-                        decoration: InputDecoration(
-                          labelText: 'Click here to add a date',
-                          labelStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        onTap: () async {
+                          TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (pickedTime != null) {
+                            controller.timeController.text =
+                                pickedTime.format(context);
+                          }
+                        },
+                        child: AbsorbPointer(
+                          child: TextField(
+                            controller: controller.timeController,
+                            decoration: InputDecoration(
+                              labelText: 'Click here to add a time',
+                              labelStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (pickedDate != null) {
+                            controller.dateController.text =
+                                "${pickedDate.toLocal()}".split(' ')[0];
+                          }
+                        },
+                        child: AbsorbPointer(
+                          child: TextField(
+                            controller: controller.dateController,
+                            decoration: InputDecoration(
+                              labelText: 'Click here to add a date',
+                              labelStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
                       ),
                     ],
-                    );
+                  );
                 } else if (controller.selectedCategory.value ==
                     'Lost & Found Post') {
                   return Column(

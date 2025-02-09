@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:pokemongo/models/community_drives.dart';
+import 'package:pokemongo/widgets/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommunityServiceController extends GetxController {
@@ -37,5 +38,17 @@ class CommunityServiceController extends GetxController {
     } finally {
       isLoading(false);
     }
+  }
+
+  void joinEvent(String eventId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? token = prefs.getString("token");
+
+    final response = _dio.post("/event/EventMail", data: {
+      "token": token,
+      "eventId": eventId,
+    });
+    SnackbarService.showSuccess("Event details will be shared via email");
   }
 }

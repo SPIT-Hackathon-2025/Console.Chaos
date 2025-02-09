@@ -22,6 +22,7 @@ class ProblemPostController extends GetxController {
   Future<void> fetchPosts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+
     print(token);
     try {
       print(1);
@@ -30,6 +31,7 @@ class ProblemPostController extends GetxController {
       }); // Adjust endpoint accordingly
       print(2);
       // print(response);
+
       if (response.statusCode == 200) {
         print(3);
 
