@@ -50,6 +50,11 @@ const PostSchema = new mongoose.Schema({
     type: Number,
     required: true, // Optional: make it required if necessary
   },
+  address: { 
+    type: String, 
+    required: true, // Address is mandatory
+    trim: true,
+  },
   // Array of tags for categorization
   tags: [{
     type: String,

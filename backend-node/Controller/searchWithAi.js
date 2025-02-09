@@ -58,8 +58,11 @@ const searchWIthAI = async(req, res) => {
             messages: data,
             format: format_2
         });
-
-        res.send(response.message.content)
+        console.log(response.message.content);
+        
+        const {id,info}=JSON.parse(response.message.content)
+        const post=await LostFound.find({_id:id})
+        res.send({post,info})
     } catch (error) {
         console.log(error);
         res.status(500)
