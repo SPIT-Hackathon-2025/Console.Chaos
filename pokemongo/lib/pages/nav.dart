@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pokemongo/chatbot/chatbot.dart';
 import 'package:pokemongo/pages/drives/open_drives.dart';
 import 'package:pokemongo/pages/lost_and_found/lost_and_found.dart';
 import 'package:pokemongo/pages/posts/map.dart';
@@ -72,6 +73,12 @@ class NavigationTabsState extends State<NavigationTabs> {
             label: 'Lost & Found',
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: bgcolor,
+        onPressed: () =>
+            {Get.to(() => ChatBotPage(), transition: Transition.rightToLeft)},
+        child: Icon(Icons.assistant, color: Colors.redAccent),
       ),
     );
   }

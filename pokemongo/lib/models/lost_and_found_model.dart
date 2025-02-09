@@ -27,7 +27,7 @@ class LostAndFoundPost {
       username: json['user']["username"] ?? '',
       imageUrl: json['imgUrl'] ?? '',
       description: json['description'] ?? '',
-      location: json['location'] ?? '',
+      location: json['address'] ?? '',
       timeAgo: json['createdAt'] != null ? DateFormat('dd/MM/yyyy hh:mm').format(DateTime.parse(json['createdAt'])) : '',
       isClaimed: json['isClaimed'] ?? false,
       tags: List<String>.from(json['tags'] ?? []),

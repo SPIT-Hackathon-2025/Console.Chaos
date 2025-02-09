@@ -22,7 +22,7 @@ class ProblemsPostsPage extends StatelessWidget {
         margin: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const HomeAppBar(),
+            HomeAppBar(),
             const SizedBox(height: 20),
             Expanded(
               child: Obx(

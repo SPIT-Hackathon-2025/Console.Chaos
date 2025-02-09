@@ -8,6 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pokemongo/constants.dart';
+import 'package:pokemongo/controller/community_service_controller.dart';
 import 'package:pokemongo/controller/lost_and_found_controller.dart';
 import 'package:pokemongo/controller/map_controller.dart';
 import 'package:pokemongo/controller/problem_post_controller.dart';
@@ -17,6 +18,7 @@ import 'dart:io';
 import 'package:pokemongo/models/problems_post_model.dart';
 import 'package:pokemongo/service/api_service.dart';
 import 'package:pokemongo/service/shared_preferences_service.dart';
+import 'package:pokemongo/widgets/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadPostController extends GetxController {
@@ -26,6 +28,8 @@ class UploadPostController extends GetxController {
   Rx<Uint8List?> watermarkedImgBytes = Rx<Uint8List?>(null);
   RxDouble latitude = 0.0.obs;
   RxDouble longitude = 0.0.obs;
+
+  RxInt coins = 0.obs;
 
   // Text Editing Controllers
   TextEditingController titleController = TextEditingController();
@@ -37,7 +41,6 @@ class UploadPostController extends GetxController {
 
   MapController mapController = Get.put(MapController());
   MumbaiMapController mumbaiMapController = Get.put(MumbaiMapController());
-
   // Dropdown categories
   RxString selectedCategory = 'Regular Post'.obs;
   final List<String> categories = [
@@ -144,6 +147,7 @@ class UploadPostController extends GetxController {
         "longitude": longitude.value,
         "token": SharedPreferencesService.getString('token'),
         "tags": tagsController.text.split(","),
+        "address": address.value,
       });
       print(response);
       // Add marker to the map
@@ -181,17 +185,25 @@ class UploadPostController extends GetxController {
         "token": token,
         "tags": tagsController.text.split(","),
         "eventDate": dateController.text,
+        "address": address.value,
+        "latitude": latitude.value,
+        "longitude": longitude.value,
       });
       print(response);
-      Get.snackbar("Success", "Event Created Succesfully!",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white);
 
       // Clear form
       descriptionController.clear();
       image.value = null;
       address.value = "";
+
+      CommunityServiceController communityServiceController =
+          Get.find<CommunityServiceController>();
+
+      communityServiceController.fetchAllEvents();
+
+      Get.back();
+      SnackbarService.showSuccess("Social Event Created Successfully!");
+      coins.value += 10;
 
       // Handle Community Service Post
     } else if (selectedCategory.value == 'Lost & Found Post') {
@@ -206,16 +218,19 @@ class UploadPostController extends GetxController {
         "description": descriptionController.text,
         "token": token,
         "tags": tagsController.text.split(","),
+        "address": address.value,
+        "latitude": latitude.value,
+        "longitude": longitude.value,
       });
+      coins.value += 10;
+      print(132948723);
       print(response);
-      Get.snackbar("Success", "Lost & Found post uploaded!",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white);
+      Get.back();
+      Get.back();
+      SnackbarService.showSuccess("Lost and Found Post Created Successfully!");
       LostAndFoundController problemPostController =
           Get.find<LostAndFoundController>();
       problemPostController.fetchAllLostAndFound();
-      Get.back();
     } else {
       return;
     }

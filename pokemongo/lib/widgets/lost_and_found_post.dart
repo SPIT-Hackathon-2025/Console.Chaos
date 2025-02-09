@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pokemongo/constants.dart';
 
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pokemongo/constants.dart';
+
 class LostFoundItem extends StatelessWidget {
   final String imageUrl;
   final String username;
@@ -11,8 +15,9 @@ class LostFoundItem extends StatelessWidget {
   final bool isOwner;
   final int commentsCount;
   final int claimCount;
+  final RxBool isClaimed; // Reactive variable
 
-  const LostFoundItem({
+  LostFoundItem({
     super.key,
     required this.imageUrl,
     required this.username,
@@ -23,6 +28,7 @@ class LostFoundItem extends StatelessWidget {
     required this.isOwner,
     this.commentsCount = 0,
     this.claimCount = 0,
+    required this.isClaimed,
   });
 
   @override
@@ -80,7 +86,6 @@ class LostFoundItem extends StatelessWidget {
                     fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
 
-            // Show comment and claim count only if the user is the owner
             if (isOwner) ...[
               const Divider(),
               Text(
@@ -93,20 +98,28 @@ class LostFoundItem extends StatelessWidget {
               ),
               const SizedBox(height: 6),
             ] else
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: onClaim,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              Obx(() => SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: isClaimed.value
+                          ? null
+                          : () {
+                              onClaim();
+                              isClaimed.value = true;
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            isClaimed.value ? Colors.grey : Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        isClaimed.value ? "Claimed" : "Claim Item",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ),
-                  child: const Text("Claim Item",
-                      style: TextStyle(color: Colors.white)),
-                ),
-              ),
+                  )),
           ],
         ),
       ),

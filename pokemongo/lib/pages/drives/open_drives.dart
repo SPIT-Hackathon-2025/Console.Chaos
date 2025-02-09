@@ -34,7 +34,7 @@ class OpenDrives extends StatelessWidget {
                     return CommunityDriveCard(
                       isOrganizer: false,
                       imageUrl: event.imageUrl,
-                      location: "spit",
+                      location: event.location,
                       title: event.eventDetails,
                       time: event.eventDate,
                       onRsvp: () {

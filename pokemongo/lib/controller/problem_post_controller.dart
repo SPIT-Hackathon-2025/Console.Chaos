@@ -8,7 +8,9 @@ class ProblemPostController extends GetxController {
   var likedPosts = <int>{}.obs;
   var dislikedPosts = <int>{}.obs;
 
-  final Dio _dio = Dio(BaseOptions(baseUrl: "https://rapid-raptor-slightly.ngrok-free.app/api")); // Change based on your backend
+  final Dio _dio = Dio(BaseOptions(
+      baseUrl:
+          "https://rapid-raptor-slightly.ngrok-free.app/api")); // Change based on your backend
 
   @override
   void onInit() {
@@ -27,27 +29,32 @@ class ProblemPostController extends GetxController {
         "token": token,
       }); // Adjust endpoint accordingly
       print(2);
-      print(response);
+      // print(response);
       if (response.statusCode == 200) {
-      print(3);
+        print(3);
 
         var fetchedData = response.data as List;
-      print(4);
+        print(fetchedData.map((e) => e["user"]["username"]).toList());
+        print(4);
 
-        var postList = fetchedData.map((post) => ProblemPost(
-          postId: post['_id'].hashCode, // Using hashCode as a unique identifier
-          username: post["user"]['username'] ?? 'Unknown',
-          timeAgo: _formatTimeAgo(post['createdAt']),
-          location: "${post['latitude']}, ${post['longitude']}",
-          content: post['description'] ?? '',
-          imageUrl: post['imgUrl'],
-          likes: post['upvotes'] ?? 0,
-          dislikes: post['downvotes'] ?? 0,
-          comments: 0, // Assuming no comments field, you can update this later
-          views: "0", // Placeholder, update as needed
-          tags: List<String>.from(post['tags'] ?? []),
-        )).toList();
-      print(5);
+        var postList = fetchedData
+            .map((post) => ProblemPost(
+                  postId: post['_id']
+                      .hashCode, // Using hashCode as a unique identifier
+                  username: post["user"]['username'],
+                  timeAgo: _formatTimeAgo(post['createdAt']),
+                  location: "${post['latitude']}, ${post['longitude']}",
+                  content: post['description'] ?? '',
+                  imageUrl: post['imgUrl'],
+                  likes: post['upvotes'] ?? 0,
+                  dislikes: post['downvotes'] ?? 0,
+                  comments:
+                      0, // Assuming no comments field, you can update this later
+                  views: "0", // Placeholder, update as needed
+                  tags: List<String>.from(post['tags'] ?? []),
+                ))
+            .toList();
+        print(5);
 
         posts.assignAll(postList); // Update observable list
       }

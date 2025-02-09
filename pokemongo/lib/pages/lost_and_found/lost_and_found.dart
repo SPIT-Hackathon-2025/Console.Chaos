@@ -32,9 +32,11 @@ class LostAndFound extends StatelessWidget {
                       description: post.description,
                       location: post.location,
                       timeFound: post.timeAgo,
+                      isClaimed: post.isClaimed.obs, // Reactive state
                       onClaim: () {
-                        
-                        Get.snackbar("Claimed", "You have claimed this item!",
+                        post.isClaimed = true;
+                        Get.snackbar("Claimed",
+                            "You have claimed this item! follow the instructions on the mail",
                             snackPosition: SnackPosition.BOTTOM,
                             backgroundColor: Colors.blue,
                             colorText: Colors.white);
