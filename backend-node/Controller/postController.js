@@ -6,7 +6,7 @@ const createPost = async (req, res) => {
     try {
         const jwtSecret=process.env.JWT_SECRET
       const { description, token, latitude, longitude, tags,imgUrl,address } = req.body;
-  
+      console.log(req.body)
       const decoded = jwt.verify(token, jwtSecret);
       // Assuming your token payload was signed with an "id" property:
       const user = decoded.id;

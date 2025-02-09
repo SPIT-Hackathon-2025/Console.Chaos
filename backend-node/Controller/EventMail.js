@@ -1,9 +1,12 @@
+const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const UserModel = require('../Models/UserModel');
+const EventModel = require('../Models/Event');
 require('dotenv').config();
 
 const senderEmail = process.env.SENDER_EMAIL;
 const senderPass = process.env.SENDER_APP_PASS;
-
+const jwt_secret = process.env.JWT_SECRET
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -88,24 +91,56 @@ const htmlContent = (userName, eventDescription, eventDate, longitude, latitude)
 
 
 const EventMail = async (req, res) => {
-    const { user, description, eventDate, longitude, latitude } = req.body;
+    try {
+        console.log(req.body);
 
-    const mailOptions = {
-        from: senderEmail,
-        to: user.email,
-        subject: `Congratulations on Joining the Event`,
-        html: htmlContent(user.username, description, eventDate, longitude, latitude)
-    };
+        const { token, eventId } = req.body;
+        const decoded = jwt.verify(token, jwt_secret); // Verify and extract user ID
+        const userId = decoded.id;
+        
+        console.log("Decoded User ID:", userId);
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Error sending email:', error);
-            res.status(500).send('Error sending email');
-        } else {
-            console.log('Email sent:', info.response);
-            res.status(200).send('Email sent successfully');
+        // Fetch user data
+        const userData = await UserModel.findById(userId);
+        if (!userData) {
+            return res.status(404).json({ message: "User not found" });
         }
-    });
+        console.log("User Data:", userData);
+
+        // Fetch event data
+        const eventData = await EventModel.findById(eventId);
+        if (!eventData) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+        console.log("Event Data:", eventData);
+
+        // Extract required details
+        const { email, username } = userData;
+        const { description, eventDate, longitude, latitude } = eventData;
+
+        // Email options
+        const mailOptions = {
+            from: senderEmail,
+            to: email,
+            subject: `Congratulations on Joining the Event`,
+            html: htmlContent(username, description, eventDate, longitude, latitude)
+        };
+
+        // Send email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.status(500).json({ message: 'Error sending email' });
+            } else {
+                console.log('Email sent:', info.response);
+                return res.status(200).json({ message: 'Email sent successfully' });
+            }
+        });
+
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 };
 
 

@@ -1,8 +1,9 @@
 const express = require('express'); // Import express
 const mongoose = require('mongoose'); // Import mongoose
 const app = express(); // Create an instance of express
+const cors=require('cors')
 require('dotenv').config()
-
+app.use(cors())
 
 const uri = "mongodb+srv://rorifim199:vpJzSwKhWjECoho9@spithack1.ul5ys.mongodb.net/?retryWrites=true&w=majority&appName=SpitHack1"; // Replace 'your_actual_password' with your MongoDB password
 
